@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    table {
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333333;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 200px;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #cccccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #4caf50;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>
+        <form action="loginPage" method="post">
+          <h2>Login</h2>
+          <table>
+            <tr>
+              <td>User Name:</td>
+              <td><input type="text" name="uname"/></td>
+            </tr>
+            <tr>
+              <td>Password:</td>
+              <td><input type="password" name="upass"/></td>
+            </tr>
+            <tr>
+              <td colspan="2" align="center">
+                <input type="submit" value="SUBMIT"/>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
