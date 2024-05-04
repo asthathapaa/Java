@@ -1,0 +1,33 @@
+projec
+addservlet
+package java;
+
+import java.io.*;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/AddServlet")
+
+public class AddServlet extends HttpServlet {
+	private static final long serialVersionUID= 1L;
+	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		try {
+		int a= Integer.parseInt(req.getParameter("first"));
+		int b=Integer.parseInt(req.getParameter("sec"));
+		
+		int ans=a+b;
+		PrintWriter out= res.getWriter();
+		out.println("Ans="+ans);
+		}
+		catch (Exception e) {
+			e.getMessage();
+		}
+	}
+}
+
+
+2)

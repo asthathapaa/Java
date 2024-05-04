@@ -1,0 +1,162 @@
+memberRegister
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="Register" method="post">
+<table>
+<tr>
+<td> User name:</td>
+<td><input type="text" name="uname"></td>
+</tr>
+<tr>
+<td>Password:</td>
+<td><input type="password" name="password"></td>
+</tr>
+<tr>
+<td> </td>
+<td><input type="submit" value="register"></td>
+</tr>
+
+</table>
+ 
+ </form>
+</body>
+</html>
+
+
+member.java
+
+
+public class Member {
+ private String uname,password;
+
+public Member(String uname, String password) {
+	super();
+	this.uname = uname;
+	this.password = password;
+}
+
+public String getUname() {
+	return uname;
+}
+
+public void setUname(String uname) {
+	this.uname = uname;
+}
+
+public String getPassword() {
+	return password;
+}
+
+public void setPassword(String password) {
+	this.password = password;
+}
+
+  
+}
+
+register.java
+
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/Register")
+public class Register extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String uname = request.getParameter("uname");
+        String password = request.getParameter("password");
+        
+        // Validate input parameters
+        if (uname == null || password == null || uname.isEmpty() || password.isEmpty()) {
+            response.getWriter().print("Username and password are required.");
+            return;
+        }
+
+        // Create a Member object
+        Member member = new Member(uname, password);
+        
+        // Insert the member into the database
+        Registerdao rDao = new Registerdao();
+        String result = rDao.insert(member);
+        
+        // Return appropriate response to the client
+        if ("data entered successfully".equals(result)) {
+            response.getWriter().print("Registration successful.");
+        } else {
+            response.getWriter().print("Registration failed. Please try again later.");
+        }
+    }
+}
+
+registerdao.java
+
+import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
+public class Registerdao {
+	private String durl="jdbc:mysql://localhost:3306/userdb";
+	private String dbname="root";
+	private String dbpassword="mysql";
+	private String dbdriver="com.mysql.jdbc.Driver";
+	public void loadDriver(String dbDriver) {
+		try {
+			Class.forName(dbDriver);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public Connection getConnection() {
+	    Connection con = null;
+	    try {
+	        // Load the JDBC driver
+	        Class.forName(dbdriver);
+	        // Establish the database connection
+	        con = DriverManager.getConnection(durl, dbname, dbpassword);
+	    } catch (ClassNotFoundException e) {
+	        e.printStackTrace();
+	        // Handle the exception (e.g., log it or throw a custom exception)
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        // Handle the exception (e.g., log it or throw a custom exception)
+	    }
+	    return con;
+	}
+
+
+	public String insert(Member member) {
+		loadDriver(dbdriver);
+		Connection con =getConnection();
+
+		String sql= "insert into userdb values(?,?)";
+		String result= "data entered successfully";
+		try {
+			PreparedStatement ps= con.prepareStatement(sql);
+			ps.setString(1, member.getUname());
+			ps.setString(2, member.getPassword());
+			ps.executeUpdate();
+		}catch(SQLException e) {
+			e.printStackTrace();
+			//result="data not entered";
+		}
+		return result;
+	}
+}

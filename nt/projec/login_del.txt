@@ -1,0 +1,76 @@
+LOGIN
+
+loginServlet
+
+
+import java.io.*;
+import java.sql.*;
+
+import javax.servlet.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+//@WebServlet("/loginServlet")
+public class loginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+ 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out= response.getWriter();
+		try{
+		
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/asthaa","username","password");
+			String n= request.getParameter("name");
+			String p= request.getParameter("pwd");
+			PreparedStatement ps= conn.prepareStatement("select name from login where uname=? AND password=?");
+			ps.setString(1, n);
+			ps.setString(2, p);
+			ResultSet rs= ps.executeQuery();
+			if(rs.next()) {
+				RequestDispatcher rd= request.getRequestDispatcher("welcome.jsp");
+				rd.forward(request, response);
+			}
+			else {
+				out.println("<font color= 'red' size =18> Login failed!!<br>");
+			out.println("<a href= '/login.jsp'> Try again </a>");
+			}
+			conn.close();
+		}
+		catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+catch(SQLException e) {
+	e.printStackTrace();
+}
+	}
+}
+
+login.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>login</title>
+</head>
+<body>
+<div align="center">
+<h1> User login</h1>
+</div>
+<form action= "/loginServlet" method=get>
+<table>
+<tr> <td> Name:</td> <td> <input type="text" name="name"></td> </tr>
+<tr> <td> Password:</td> <td> <input type="password" name="pwd"></td> </tr>
+<tr> <td><input type="submit" value="login"> </td>
+<td> <input type="reset" value="reset" > </td></tr>
+</table>
+</form>
+</body>
+</html>

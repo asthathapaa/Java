@@ -1,0 +1,150 @@
+package project2;
+import java.sql.*;
+
+
+
+public class Database {
+public Connection connect() throws Exception {
+	
+	
+	Class.forName("com.mysql.jdbc.Driver");
+	Connection conn= null;
+	conn= DriverManager.getConnection("jdbc:mysql://localhost:3306/ncit","root","pwd");	
+	return conn;
+	
+	
+}
+public int insert (Student st) throws Exception{
+	Connection conn= connect();
+	//int roll= st.getParameter("roll");
+	
+	
+	PreparedStatement ps= conn.prepareStatement("insert into student values(?,?)");
+	ps.setInt(1, st.getRoll());
+	ps.setString(2, st.getName());
+	
+	int i=0;
+	i= ps.executeUpdate();
+	return i;
+	
+}
+}
+
+2)package project2;
+
+public class Student {
+	 int roll;
+	String name;
+	
+	public void setRoll(int roll) {
+		this.roll=roll;
+	}
+	public void setName(String name) {
+		this.name=name;
+	}
+	public int getRoll() {
+		return roll;
+	}
+	public String getName() {
+		return name;
+	}
+
+}
+
+3)package two;
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import project2.Database;
+import project2.Student;
+
+@WebServlet("/SaveServlet")
+
+class SaveServlet extends HttpServlet{
+	private static final long serialVersionUID= 1L;
+	
+	public void doGet (HttpServletRequest req,HttpServletResponse res) {
+		try {
+			int roll= Integer.parseInt(req.getParameter("rolln"));
+			String name= req.getParameter("name");
+			
+			Student st= new Student();
+			st.setRoll(roll);
+			st.setName(name);
+			
+			Database d= new Database();
+			int i= d.insert(st);
+			
+			RequestDispatcher rd= req.getRequestDispatcher("/two.html");
+			PrintWriter out= res.getWriter();
+			if(i>0) {
+				out.println("<font color='blue'>Saved </font>");
+				rd.include(req, res);
+				
+			}
+			else {
+				out.println("<font color='red'> failed</font> ");
+				rd.include(req, res);
+			}
+			
+		}
+		catch(Exception e) {
+			e.getMessage();
+		}
+	}
+	
+}
+
+4)package application;
+import javafx.application.Application;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+//import javafx.scene.layout.Pane.*;
+import javafx.stage.Stage;
+import javafx.scene.layout.GridPane;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+//import javafx.control.*;
+//import javafx.scene.control.AlertType.*;
+
+public class two extends Application {
+	public void start(Stage stage) throws Exception{
+		Alert alt= new Alert(AlertType.WARNING);
+		Label label= new Label("Enter code");
+		PasswordField pwd= new PasswordField();
+		Button login= new Button("Login");
+		
+		GridPane gp= new GridPane();
+		gp.addColumn(0, label);
+		gp.addColumn(1, pwd,login);
+		
+		Scene first= new Scene(gp,300,200);
+		//Label msg= new Label("welcome");
+		Button logout= new Button("Logout");
+		
+		VBox vb= new VBox(10);
+		Scene twoo= new Scene(vb,300,200);
+		//vb.getChildern.addAll(msg,logout);
+		stage.setScene(first);
+		login.setOnAction(e ->{ if(pwd.getText().equals("ncit123")) {
+			stage.setScene(twoo);
+		}
+		else {
+			alt.setContentText("Wrong");
+			alt.show();
+		}
+			
+		});
+		logout.setOnAction(e -> stage.setScene(first));
+		stage.show();
+		
+		
+	}
+public static void main(String [] args) {
+	launch(args);
+}}
